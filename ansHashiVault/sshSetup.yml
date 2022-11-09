@@ -3,10 +3,8 @@
 #
 # ansible-playbook sshSetup.yml -i hosts.ini 
 ---
-- hosts: local_host   
-  vars_files:
-  - vars.yml
-
+- hosts: local_host 
+  
   tasks:
     - name: check .ssh local directory exists
       stat:

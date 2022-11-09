@@ -1,9 +1,3 @@
-#User
-created_user: scott
-remote_machine_username: scott
-remote_machine_password: Cqfp9o0w2024!
-
-
 #Package Variables
 vault_repository_url: "https://apt.releases.hashicorp.com"
 vault_repository_key_url: "{{ vault_repository_url }}/gpg"
@@ -21,6 +15,3 @@ vault_tls_private_path: /opt/vault/tls
 # System user and group
 vault_user: vault
 vault_group: vault
-
-# Logging
-vault_enable_log: true
