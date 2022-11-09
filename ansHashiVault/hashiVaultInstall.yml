@@ -120,12 +120,7 @@
     - name: Enable vault.service
       ansible.builtin.systemd:
         name: vault.service
-        enabled: yes    
-
-    - name: "Set Exec output to log path when enabled log"
-      set_fact:
-        vault_exec_output: ">> {{ vault_log_path }}/vault.log 2>&1"
-        when: vault_enable_log     
+        enabled: yes            
 
     - name: Create vault.hcl
       ansible.builtin.template:
