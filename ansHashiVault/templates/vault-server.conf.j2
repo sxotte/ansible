@@ -1,0 +1,24 @@
+// {{ ansible_managed }}
+
+// Disable if not needed
+ui = true
+
+// Disable Mlock recommended for integrated storage
+disable_mlock = true
+
+// Cluster not usually used for single node but must be set when using raft storage.
+cluster_addr  = "https://127.0.0.1:8201"
+api_addr      = "https://127.0.0.1:8200"
+disable_mlock = true
+
+listener "tcp" {
+  address            = "127.0.0.1:8200"
+  tls_cert_file = "/opt/vault/tls/tls.crt"
+  tls_key_file  = "/opt/vault/tls/tls.key"
+  #tls_disable_client_certs = true
+}
+
+storage "raft" {
+  path = "/home/vault/data"
+  node_id = "raft_node_1"
+}

@@ -1,0 +1,26 @@
+#User
+created_user: scott
+remote_machine_username: scott
+remote_machine_password: Cqfp9o0w2024!
+
+
+#Package Variables
+vault_repository_url: "https://apt.releases.hashicorp.com"
+vault_repository_key_url: "{{ vault_repository_url }}/gpg"
+vault_repository_keyring: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+#Paths
+vault_config_path: /home/vault/etc
+vault_plugin_path: /usr/local/lib/vault/plugins
+vault_log_path: /var/log/vault
+vault_raft_path: /home/vault/data
+vault_run_path: /var/run/vault
+vault_tls_certs_path: /opt/vault/tls
+vault_tls_private_path: /opt/vault/tls
+
+# System user and group
+vault_user: vault
+vault_group: vault
+
+# Logging
+vault_enable_log: true

@@ -1,0 +1,137 @@
+# run the playbook as:
+#
+# ansible-playbook playbook.yml -i hosts.ini --become-user=root --ask-become-pass
+---
+- hosts: HashicorpVault
+  become: true
+  become_method: sudo
+
+  vars_files:
+    - vars.yml
+  pre_tasks:
+    - name: packages - ensure apt list dir exists.
+      file:
+        path: /var/lib/apt/lists/
+        state: directory
+        mode: 0755
+
+    - name: Update Apt package data if required.
+      apt:
+       upgrade: yes
+       update_cache: yes
+       cache_valid_time: 3600
+  
+  tasks:
+    - name: Import Hashicorp Vault GPG Key.
+      apt_key:
+        id: E8A032E094D8EB4EA189D270DA418C88A3219F7B
+        url: "{{ vault_repository_key_url }}"
+        keyring: "{{vault_repository_keyring}}"
+    
+    - name: Install Hashicorp Apt Repo.
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/hashicorp.list
+        owner: root
+        group: root
+        mode: 0644
+        content: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ansible_distribution_release}} main"
+        
+    - name: Update Apt package data
+      ansible.builtin.apt:
+        update_cache: yes
+        #force_apt_get: yes
+
+    - name: Install Vault 1.12.1-1
+      ansible.builtin.apt:
+        name: vault=1.12.1-1
+        state: present
+
+    - name: Ensure that Vault is locked so that it must be manually upgraded.
+      dpkg_selections:
+        name: vault
+        selection: hold
+
+    - name: Create group "vault" with gid 10666
+      ansible.builtin.group:
+        name: vault
+        state: present
+        gid: 10666   
+
+    - name: Create user 'vault' with a uid 10666 and a primary group of 'vault' and create home dir.
+      ansible.builtin.user:
+        name: vault
+        create_home: yes
+        uid: 10666
+        group: vault
+
+    - name: Create vault directories.      
+      file:
+        dest: "{{ item.path }}"
+        state: directory
+        owner: "{{ vault_user }}"
+        group: "{{ vault_group }}"
+        mode: "{{ item.mode }}"
+      with_items:
+        - path: "{{ vault_config_path }}"
+          mode: "770"
+        - path: "{{ vault_plugin_path }}"
+          mode: "0750"
+        - path: "{{ vault_raft_path }}"
+          mode: "0770"
+        - path: "{{ vault_log_path }}"
+          mode: "0750"
+        - path: "{{ vault_run_path }}"
+          mode: "0750"   
+
+    - name: Set permissions on backend TLS directory       
+      ansible.builtin.file:
+        dest: "{{ vault_tls_certs_path }}"
+        state: directory
+        owner: "{{ vault_user }}"
+        group: "{{ vault_group }}"
+        mode: 0700               
+
+    - name: Set permissions on default vault TLS Private Key
+      ansible.builtin.file:
+         path: /opt/vault/tls/tls.key
+         owner: root
+         group: "{{ vault_group }}"
+         mode: '0640'         
+
+    - name: Set permissions on default vault TLS Certificate
+      ansible.builtin.file:
+         path: /opt/vault/tls/tls.crt
+         owner: root
+         group: root         
+         mode: '0644'
+  
+    - name: Reconfigure vault.service
+      ansible.builtin.template:
+        src: templates/vault.service.j2
+        dest: /etc/systemd/system/vault.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Force systemd to reload configs.
+      ansible.builtin.systemd:
+        daemon_reload: yes   
+
+    - name: Enable vault.service
+      ansible.builtin.systemd:
+        name: vault.service
+        enabled: yes    
+
+    - name: "Set Exec output to log path when enabled log"
+      set_fact:
+        vault_exec_output: ">> {{ vault_log_path }}/vault.log 2>&1"
+        when: vault_enable_log     
+
+    - name: Create vault.hcl
+      ansible.builtin.template:
+        src: templates/vault-server.conf.j2
+        dest: /home/vault/etc/vault.hcl
+        owner: vault
+        group: vault
+        mode: '0644'
+
