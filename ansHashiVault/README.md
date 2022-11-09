@@ -24,7 +24,9 @@ ansible-playbook sshSetup.yml -i hosts.ini
 
 ## hashiVaultInstall.yml
 
-hashiVaultInstall.yml requires hosts.ini and vars.yml
+hashiVaultInstall.yml requires hosts.ini and vars.yml. vars.yml contains variables to customise vault installation. This can be left at default values.
+
+---
 
 
 
