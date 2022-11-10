@@ -14,10 +14,10 @@ hashiVaultBackup will create a local GPG key, export it to the remote host and c
 
 sshSetup.yml requires hosts.ini, there are a number of variables in here that will need to be updated to match the target environment.
 
-run this playbook as 
+run this playbook with 
 
 ```bash
-ansible-playbook sshSetup.yml -i hosts.ini
+ansible-playbook sshSetup.yml -i hosts.yml
 ```
 
 ---
@@ -25,6 +25,12 @@ ansible-playbook sshSetup.yml -i hosts.ini
 ## hashiVaultInstall.yml
 
 hashiVaultInstall.yml requires hosts.ini and vars.yml. vars.yml contains variables to customise vault installation. These can be left at default values.
+
+run this playbook as 
+
+```bash
+ansible-playbook hashiVaultInstall.yml -i hosts.yml --become-user=root --ask-become-pass
+```
 
 ---
 
