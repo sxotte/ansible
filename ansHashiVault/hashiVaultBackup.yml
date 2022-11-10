@@ -5,7 +5,7 @@
 - hosts: local_host   
   vars_files:
   - gpgVar.yml
-
+## Creates GPG key for encryption of backups
   tasks:
     - name: Ensure .gnupg config directory exists with right permissions
       ansible.builtin.file:
@@ -50,6 +50,17 @@
     ## Hardcoding manually created key for testing.
     - name: Import Public Key
       ansible.builtin.command: gpg --import "/tmp/john.asc"
+
+    - name: Copy backup script.
+      ansible.builtin.copy:
+        dest: "/tmp/VaultGPGbackup.sh"        
+        src: "/home/{{ ansible_user }}/vaultBackup/VaultGPGbackup.sh"
+        mode: 0755 
    
-           
+    - name: Create Backup cronjob
+      ansible.builtin.cron:
+         name: "check dirs"
+         minute: "40"
+         hour: "11,5,2"
+         job: "/tmp/VaultGPGbackup.sh"     
 
