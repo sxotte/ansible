@@ -35,7 +35,7 @@
       args:
         creates: "{{ gpg_home }}/{{ gpg_pubkeyfileexport }}"
 
-
+##Exports public key to remote, copys backup script and adds cronjob.
 - hosts: HashicorpVault
   become: true
   become_method: sudo 
@@ -47,7 +47,7 @@
       ansible.builtin.copy:
         dest: "/tmp/john.asc"        
         src: "/home/{{ ansible_user }}/vaultBackup/john.asc"
-    ## Hardcoding manually created key for testing.
+    
     - name: Import Public Key
       ansible.builtin.command: gpg --import "/tmp/john.asc"
 
@@ -60,7 +60,7 @@
     - name: Create Backup cronjob
       ansible.builtin.cron:
          name: "check dirs"
-         minute: "40"
-         hour: "11,5,2"
+         minute: "0"
+         hour: "10,2"
          job: "/tmp/VaultGPGbackup.sh"     
 
