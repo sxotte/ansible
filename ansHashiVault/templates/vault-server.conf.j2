@@ -7,8 +7,8 @@ ui = true
 disable_mlock = true
 
 // Cluster not usually used for single node but must be set when using raft storage.
-cluster_addr  = "https://127.0.0.1:8201"
-api_addr      = "https://127.0.0.1:8200"
+cluster_addr  = "https://"{{ hostvars[HashicorpVault]['ansible_host']['address'] }}":8201"
+api_addr      = "https://"{{ hostvars[HashicorpVault]['ansible_default_ipv4']['address'] }}":8200"
 disable_mlock = true
 
 listener "tcp" {
