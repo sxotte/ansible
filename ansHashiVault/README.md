@@ -6,7 +6,7 @@ This repository contains three ansible playbooks.
 
 - hashiVaultInstall.yml will install Hashicorp Vault on a remote host as a single node using Integrated Storage.
 
-- hashiVaultBackup will create a local GPG key, export it to the remote host and configure the automatic compression and encryption of vault data.
+- hashiVaultBackup will create a local GPG key pair, export the public key to the remote host and configure the automatic compression and encryption of vault data.
 
 ---
 
@@ -15,9 +15,10 @@ This repository contains three ansible playbooks.
 sshSetup.yml requires: 
  - hosts.yml. 
 
-hosts.yml contains a number of variables that will need to be updated to match the operating environment.
+hosts.yml contains a number of variables that will need to be updated to match the operating environment. 
 
-Specifically: 
+Specifically:
+- Ansible Host Inventory information 
 - ansible_user. 
 - ansible_password. 
 - remote_machine_username. 
