@@ -13,7 +13,7 @@ hashiVaultBackup will create a local GPG key, export it to the remote host and c
 ## sshSetup.yml
 
 sshSetup.yml requires: 
-hosts.yml. 
+ - hosts.yml. 
 
 hosts.yml contains a number of variables in here that will need to be updated to match the operating environment.
 specifically ansible_user, ansible_password, remote_machine_username and remote_machine_password.
@@ -32,7 +32,7 @@ hashiVaultInstall.yml requires:
 - hosts.yml.
 - vars.yml.
 
-- Templates:
+Templates:
 - vault-server.conf.j2 - > Vault config template
 - vault.service.j2 - > Vault service template
 
