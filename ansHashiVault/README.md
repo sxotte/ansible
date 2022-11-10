@@ -52,7 +52,7 @@ ansible-playbook hashiVaultInstall.yml -i hosts.yml --become-user=root --ask-bec
 
 ---
 
-## hashiVaultBackup.yml
+## hashiVaultBackup.yml  - Not fully functional.
 
 hashiVaultInstall.yml requires: 
 - hosts.yml
