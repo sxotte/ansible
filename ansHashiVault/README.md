@@ -57,7 +57,7 @@ ansible-playbook hashiVaultInstall.yml -i hosts.yml --become-user=root --ask-bec
 hashiVaultInstall.yml requires: 
 - hosts.yml
 - gpgVar.yml.
-- vaultGPGbackup.sh - > Script to automate copy, compression and encryption of Vault Data
+- vaultGPGbackup.sh - > Script to automate the copy, compression and encryption of Vault Data
 
 
 vars.yml contains variables to customise GPG certificate creation. These will need to be updated to match the operating environment.
