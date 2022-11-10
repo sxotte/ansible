@@ -107,6 +107,7 @@
   
     - name: Reconfigure vault.service
       ansible.builtin.template:
+        var: ansible_facts
         src: templates/vault.service.j2
         dest: /etc/systemd/system/vault.service
         owner: root
