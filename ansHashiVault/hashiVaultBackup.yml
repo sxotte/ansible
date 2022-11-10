@@ -1,6 +1,6 @@
 # run the playbook as:
 #
-# ansible-playbook playbook.yml -i hosts.ini --become-user=root --ask-become-pass
+# ansible-playbook hashiVaultBackup.yml -i hosts.ini --ask-become-pass
 ---
 - hosts: local_host   
   vars_files:
@@ -12,41 +12,44 @@
         dest: "{{ gpg_home }}/.gnupg"
         state: directory
         mode: "0700"
-        owner: "{{ gpg_generator_user }}"   
+        owner: "{{ ansible_user }}"   
     
     - name: Copy default template for gpg key generation
       ansible.builtin.template:
         src: templates/gpgGenKeyScript
         dest: "{{ gpg_home }}/.gnupg/gen-key-script-{{ gpg_user }}"
         mode: "0600"
-        owner: "{{ gpg_generator_user }}"   
-        
+        owner: "{{ ansible_user }}"   
+    ## Script not working - generates incomplete key.   
     - name: Generate gpg key
       ansible.builtin.command: "gpg --batch --gen-key {{ gpg_home }}/.gnupg/gen-key-script-{{ gpg_user }}"
       become: yes
-      become_user: "{{ gpg_generator_user }}"
+      become_user: "{{ ansible_user }}"
       args:
         chdir: "{{ gpg_home }}"        
     
     - name: Get user armored public key
       ansible.builtin.shell: "gpg --export -a {{ gpg_useremail }} > {{ gpg_home }}/{{ gpg_pubkeyfileexport }}"
       become: yes
-      become_user: "{{ gpg_generator_user }}"
+      become_user: "{{ ansible_user }}"
       args:
         creates: "{{ gpg_home }}/{{ gpg_pubkeyfileexport }}"
 
 
-- hosts: HashicorpVault 
+- hosts: HashicorpVault
+  become: true
+  become_method: sudo 
   vars_files:
   - gpgVar.yml
-
+    ## Hardcoding manually created key for testing.
   tasks:
     - name: Export GPG Public Key.
       ansible.builtin.copy:
-        dest: "/tmp/{{ gpg_user }}.pub"        
-        content: "/home/{{ gpg_generator_user }}/vaultBackup/{{ gpg_user }}.pub"
-
+        dest: "/tmp/john.asc"        
+        src: "/home/{{ ansible_user }}/vaultBackup/john.asc"
+    ## Hardcoding manually created key for testing.
     - name: Import Public Key
-      ansible.builtin.command: gpg --import "/tmp/{{ gpg_user }}.pub" 
+      ansible.builtin.command: gpg --import "/tmp/john.asc"
+   
            
 
