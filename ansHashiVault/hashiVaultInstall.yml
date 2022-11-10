@@ -9,26 +9,26 @@
   vars_files:
     - vars.yml
   pre_tasks:
-    - name: packages - ensure apt list dir exists.
+    - name: Packages - Ensure apt list directory exists.
       file:
         path: /var/lib/apt/lists/
         state: directory
         mode: 0755
 
-    - name: Update Apt package data if required.
+    - name:  Packages - Update Apt package data if required.
       apt:
        upgrade: yes
        update_cache: yes
        cache_valid_time: 3600
   
   tasks:
-    - name: Import Hashicorp Vault GPG Key.
+    - name: Install - Import Hashicorp Vault GPG Key.
       apt_key:
         id: E8A032E094D8EB4EA189D270DA418C88A3219F7B
         url: "{{ vault_repository_key_url }}"
         keyring: "{{vault_repository_keyring}}"
     
-    - name: Install Hashicorp Apt Repo.
+    - name: Install - Install Hashicorp Apt Repo.
       ansible.builtin.copy:
         dest: /etc/apt/sources.list.d/hashicorp.list
         owner: root
@@ -36,35 +36,35 @@
         mode: 0644
         content: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ansible_distribution_release}} main"
         
-    - name: Update Apt package data
+    - name: Packages - Update Apt package data
       ansible.builtin.apt:
         update_cache: yes
         #force_apt_get: yes
 
-    - name: Install Vault 1.12.1-1
+    - name: Install - Install Vault 1.12.1-1
       ansible.builtin.apt:
         name: vault=1.12.1-1
         state: present
 
-    - name: Ensure that Vault is locked so that it must be manually upgraded.
+    - name: Configuration - Ensure that Vault is locked so that it must be manually upgraded.
       dpkg_selections:
         name: vault
         selection: hold
 
-    - name: Create group "vault" with gid 10666
+    - name: Configuration - Create group "vault" with gid 10666
       ansible.builtin.group:
         name: vault
         state: present
         gid: 10666   
 
-    - name: Create user 'vault' with a uid 10666 and a primary group of 'vault' and create home dir.
+    - name: Configuration - Create user 'vault' with a uid 10666 and a primary group of 'vault' and create home dir.
       ansible.builtin.user:
         name: vault
         create_home: yes
         uid: 10666
         group: vault
 
-    - name: Create vault directories.      
+    - name: Configuration - Create vault directories.      
       file:
         dest: "{{ item.path }}"
         state: directory
@@ -83,7 +83,7 @@
         - path: "{{ vault_run_path }}"
           mode: "0750"   
 
-    - name: Set permissions on backend TLS directory       
+    - name: Configuration - Set permissions on backend TLS directory       
       ansible.builtin.file:
         dest: "{{ vault_tls_certs_path }}"
         state: directory
@@ -91,21 +91,21 @@
         group: "{{ vault_group }}"
         mode: 0700               
 
-    - name: Set permissions on default vault TLS Private Key
+    - name: Configuration - Set permissions on default vault TLS Private Key
       ansible.builtin.file:
          path: /opt/vault/tls/tls.key
          owner: root
          group: "{{ vault_group }}"
          mode: '0640'         
 
-    - name: Set permissions on default vault TLS Certificate
+    - name: Configuration - Set permissions on default vault TLS Certificate
       ansible.builtin.file:
          path: /opt/vault/tls/tls.crt
          owner: root
          group: root         
          mode: '0644'
   
-    - name: Reconfigure vault.service
+    - name: Configuration - Reconfigure vault.service
       ansible.builtin.template:
         var: ansible_facts
         src: templates/vault.service.j2
@@ -114,16 +114,16 @@
         group: root
         mode: '0644'
 
-    - name: Force systemd to reload configs.
+    - name: Configuration - Force systemd to reload configs.
       ansible.builtin.systemd:
         daemon_reload: yes   
 
-    - name: Enable vault.service
+    - name: Configuration - Enable vault.service
       ansible.builtin.systemd:
         name: vault.service
         enabled: yes            
 
-    - name: Create vault.hcl
+    - name: Configuration - Create vault.hcl
       ansible.builtin.template:
         src: templates/vault-server.conf.j2
         dest: /home/vault/etc/vault.hcl
@@ -131,9 +131,10 @@
         group: vault
         mode: '0644'
 
-    - name: Restart vault.service
+    - name: Configuration - Restart vault.service
       ansible.builtin.systemd:
         name: vault.service
         state: restarted
+
            
 
