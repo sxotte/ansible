@@ -130,3 +130,9 @@
         group: vault
         mode: '0644'
 
+    - name: Restart vault.service
+      ansible.builtin.systemd:
+        name: vault.service
+        state: restarted
+           
+
