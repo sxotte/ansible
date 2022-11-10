@@ -29,12 +29,12 @@ ansible-playbook sshSetup.yml -i hosts.yml
 ## hashiVaultInstall.yml
 
 hashiVaultInstall.yml requires: 
-hosts.yml.
-vars.yml.
+- hosts.yml.
+- vars.yml.
 
-Templates:
-vault-server.conf.j2 - > Vault config template
-vault.service.j2 - > Vault service template
+- Templates:
+- vault-server.conf.j2 - > Vault config template
+- vault.service.j2 - > Vault service template
 
 vars.yml contains variables to customise vault installation. These can be left at default values.
 
@@ -49,9 +49,9 @@ ansible-playbook hashiVaultInstall.yml -i hosts.yml --become-user=root --ask-bec
 ## hashiVaultBackup.yml
 
 hashiVaultInstall.yml requires: 
-hosts.yml
-gpgVar.yml.
-vaultGPGbackup.sh - > Script to automate copy, compression and encryption of Vault Data
+- hosts.yml
+- gpgVar.yml.
+- vaultGPGbackup.sh - > Script to automate copy, compression and encryption of Vault Data
 
 
 vars.yml contains variables to customise GPG certificate creation. These will need to be updated to match the operating environment
