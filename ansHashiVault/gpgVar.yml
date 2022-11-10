@@ -3,7 +3,7 @@
 ##   it's both keys destination and home path for .gnupg dir
 gpg_home: "/home/{{ ansible_user }}/vaultBackup"
 
-gpg_user: "scott"
+gpg_user: "admin"
 gpg_realname: "John Smith"
 # gpg_userhome:
 gpg_useremail: "{{ gpg_user }}@localhost"
