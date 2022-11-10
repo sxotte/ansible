@@ -15,8 +15,13 @@ This repository contains three ansible playbooks.
 sshSetup.yml requires: 
  - hosts.yml. 
 
-hosts.yml contains a number of variables in here that will need to be updated to match the operating environment.
-specifically ansible_user, ansible_password, remote_machine_username and remote_machine_password.
+hosts.yml contains a number of variables that will need to be updated to match the operating environment.
+
+Specifically: 
+- ansible_user. 
+- ansible_password. 
+- remote_machine_username. 
+- remote_machine_password.
 
 run this playbook with 
 
@@ -54,8 +59,10 @@ hashiVaultInstall.yml requires:
 - vaultGPGbackup.sh - > Script to automate copy, compression and encryption of Vault Data
 
 
-vars.yml contains variables to customise GPG certificate creation. These will need to be updated to match the operating environment
-specifically gpg_user.
+vars.yml contains variables to customise GPG certificate creation. These will need to be updated to match the operating environment.
+
+Specifically: 
+- gpg_user.
 
 run this playbook as 
 
